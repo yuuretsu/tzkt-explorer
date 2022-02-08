@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@microsoft/signalr": "^6.0.1",
+    "@types/signalr": "^2.2.37",
     "sirv-cli": "^2.0.0"
   }
 }
