@@ -38,7 +38,7 @@
               <span class="transaction-from__number">#{1 + +transaction.numberInBlock}</span>
               <a class="transaction-from__wallet" class:bold={walletName(transaction.sender).type === "alias"} href={`https://tzkt.io/${transaction.sender.address}`}>{walletName(transaction.sender).value}</a>
               {#if transaction?.parameter?.entrypoint}
-              {transaction?.parameter?.entrypoint}();
+                {transaction?.parameter?.entrypoint}();
               {/if}
             </div>
           {/each}
