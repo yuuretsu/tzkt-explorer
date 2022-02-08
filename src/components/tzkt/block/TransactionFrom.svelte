@@ -1,5 +1,8 @@
 <script>
   import { walletName } from "../../../lib";
+  import MdErrorOutline from 'svelte-icons/md/MdErrorOutline.svelte';
+  import MdArrowBack from 'svelte-icons/md/MdArrowBack.svelte';
+  import MdSkipNext from 'svelte-icons/md/MdSkipNext.svelte';
   export let transaction;
 
   const method = transaction?.parameter?.entrypoint;
@@ -9,10 +12,21 @@
     "number": value => value,
     "object": _ => "{...}",
   }[typeof transaction?.parameter?.value] || (() => {}))(transaction?.parameter?.value);
+
+  const statusBlock = {
+    "failed": MdErrorOutline,
+    "backtracked": MdArrowBack,
+    "skipped": MdSkipNext,
+  }[transaction.status];
+
 </script>
 
-<div class="transaction-from">
-  <span class="transaction-from__status">{{ 'applied': "", "failed": "fail", "skipped": "⏭", "backtracked": "👈" }[transaction.status]}</span>
+<div class="transaction-from" class:failed={transaction.status === "failed"}>
+  <div class="transaction-from__status">
+    {#if statusBlock}
+      <svelte:component this={statusBlock}></svelte:component>
+    {/if}
+  </div>
   <a class="transaction-from__number" href={`https://tzkt.io/${transaction.hash}`} target="_blank">#{1 + +transaction.numberInBlock}</a>
   <a class="transaction-from__wallet" class:bold={walletName(transaction.sender).type === "alias"} href={`https://tzkt.io/${transaction.sender.address}`} target="_blank">{walletName(transaction.sender).value}</a>
   <div>
@@ -35,6 +49,7 @@
 <style>
   .transaction-from {
     display: flex;
+    align-items: center;
   }
 
   .transaction-from > * {
@@ -46,7 +61,9 @@
   }
 
   .transaction-from__status {
-    width: 30px;
+    display: flex;
+    align-items: center;
+    width: 18px;
   }
 
 
@@ -54,6 +71,10 @@
     width: 40px;
     text-align: right;
     color: inherit;
+  }
+
+  .transaction-from.failed .transaction-from__number {
+    color: red;
   }
 
   .transaction-from__number:hover {
@@ -66,10 +87,15 @@
     opacity: 0.5;
   }
 
+  .transaction-from.failed .transaction-from__wallet {
+    color: red;
+  }
+
+  
   .transaction-from__wallet:hover {
     text-decoration: underline;
   }
-
+  
   .transaction-from__wallet.bold {
     font-weight: bold;
     opacity: 1;
