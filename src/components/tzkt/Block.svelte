@@ -1,6 +1,7 @@
 <script>
   import { tzkt, walletName } from "../../lib";
   import BlockHead from "./block/BlockHead.svelte";
+  import TransactionFrom from "./block/TransactionFrom.svelte";
 
   export let block;
   export let showMore = false;
@@ -16,6 +17,7 @@
   }
 
   console.log(block);
+  
 
 </script>
 
@@ -32,15 +34,8 @@
           </a>
         </div>
         <div class="transactions-from">
-          {#each transactions.list as transaction} 
-            <div class="transaction-from">
-              <span class="transaction-from__status">{{ 'applied': "😊", "failed": "😡", "skipped": "⏭", "backtracked": "👈" }[transaction.status]}</span>
-              <span class="transaction-from__number">#{1 + +transaction.numberInBlock}</span>
-              <a class="transaction-from__wallet" class:bold={walletName(transaction.sender).type === "alias"} href={`https://tzkt.io/${transaction.sender.address}`}>{walletName(transaction.sender).value}</a>
-              {#if transaction?.parameter?.entrypoint}
-                {transaction?.parameter?.entrypoint}();
-              {/if}
-            </div>
+          {#each transactions.list as transaction}
+            <TransactionFrom {transaction} />
           {/each}
         </div>
       {/each}
@@ -62,8 +57,8 @@
     display: flex;
     align-items: center;
     box-shadow: 0 -25px 20px rgb(0 0 0 / 5%);
-    padding-bottom: 5px;
-    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-top: 15px;
     padding-left: 10px;
     padding-right: 10px;
     margin-bottom: 10px;
@@ -72,15 +67,16 @@
     margin-left: -10px;
     margin-right: -10px;
   }
-
+  
   .transaction-target-avatar {
     margin-right: 10px;
     margin-left: 10px;
     border: 1px solid rgb(0 0 0 / 25%);
     border-radius: 50%;
   }
-
+  
   .transaction-target-name {
+    color: inherit;
     font-size: 1.2em;
   }
 
@@ -93,32 +89,6 @@
     margin-bottom: 20px;
   }
 
-  .transaction-from {
-    display: flex;
-  }
-
-  .transaction-from > * {
-    flex-shrink: 0;
-  }
-
-  .transaction-from > *:not(:last-child) {
-    margin-right: 10px;
-  }
-
-
-
-  .transaction-from__number {
-    width: 40px;
-    text-align: right;
-  }
-
-  .transaction-from__wallet {
-  }
-
-  .transaction-from__wallet.bold {
-    font-weight: bold;
-  }
-
   @keyframes arise {
     from {
       opacity: 0;
@@ -128,7 +98,8 @@
   @keyframes arise2 {
     from {
       opacity: 0;
-      transform: translate(0, -100px)
+      margin-bottom: -65px;
+      transform: translate(0, -65px)
     }
   }
 </style>
